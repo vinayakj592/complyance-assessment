@@ -1,125 +1,63 @@
-import React, { ReactNode, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import Link from 'next/link'
+import { Moon, Sun, LogOut } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { Sun, Moon, Menu, X } from 'lucide-react'
-import { Transition } from '@headlessui/react'
 
-type LayoutProps = {
-  children: ReactNode
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
-  const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
+
+  if (!mounted) return null
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <nav className="bg-primary dark:bg-secondary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="text-white font-bold text-xl">
-                Complyance
-              </Link>
-            </div>
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-4">
-                {session ? (
-                  <>
-                    <Link href="/transactions" className="text-white hover:bg-primary-dark dark:hover:bg-secondary-dark px-3 py-2 rounded-md text-sm font-medium">
-                      Transactions
-                    </Link>
-                    <button
-                      onClick={() => signOut()}
-                      className="bg-white text-primary hover:bg-gray-200 dark:bg-gray-800 dark:text-secondary dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition duration-300 ease-in-out"
-                    >
-                      Sign out
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => signIn('google')}
-                    className="bg-white text-primary hover:bg-gray-200 dark:bg-gray-800 dark:text-secondary dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition duration-300 ease-in-out"
-                  >
-                    Sign in with Google
-                  </button>
-                )}
-                <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="text-white hover:bg-primary-dark dark:hover:bg-secondary-dark p-2 rounded-md"
-                >
-                  {theme === 'dark' ? (
-                    <Sun className="h-6 w-6" />
-                  ) : (
-                    <Moon className="h-6 w-6" />
-                  )}
-                </button>
-              </div>
-            </div>
-            <div className="-mr-2 flex md:hidden">
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                type="button"
-                className="bg-primary dark:bg-secondary inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-primary-dark dark:hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                aria-controls="mobile-menu"
-                aria-expanded="false"
-              >
-                <span className="sr-only">Open main menu</span>
-                {!isOpen ? (
-                  <Menu className="block h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <X className="block h-6 w-6" aria-hidden="true" />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <Transition
-          show={isOpen}
-          enter="transition ease-out duration-100 transform"
-          enterFrom="opacity-0 scale-95"
-          enterTo="opacity-100 scale-100"
-          leave="transition ease-in duration-75 transform"
-          leaveFrom="opacity-100 scale-100"
-          leaveTo="opacity-0 scale-95"
-        >
-          <div className="md:hidden px-2 pt-2 pb-3 space-y-1 sm:px-3">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <header className="bg-white dark:bg-gray-800 shadow">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <Link href="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            Complyance
+          </Link>
+          <div className="flex items-center space-x-4">
             {session ? (
               <>
-                <Link href="/transactions" className="text-white hover:bg-primary-dark dark:hover:bg-secondary-dark block px-3 py-2 rounded-md text-base font-medium">
-                  Transactions
+                <Link href="/submit-transaction" className="text-blue-600 dark:text-blue-400 hover:underline">
+                  Submit Transaction
                 </Link>
                 <button
                   onClick={() => signOut()}
-                  className="w-full text-left bg-white text-primary hover:bg-gray-200 dark:bg-gray-800 dark:text-secondary dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium"
+                  className="text-red-600 dark:text-red-400 hover:underline flex items-center"
                 >
-                  Sign out
+                  <LogOut className="mr-2 h-5 w-5" />
+                  Sign Out
                 </button>
               </>
             ) : (
               <button
                 onClick={() => signIn('google')}
-                className="w-full text-left bg-white text-primary hover:bg-gray-200 dark:bg-gray-800 dark:text-secondary dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
               >
-                Sign in with Google
+                Sign In
               </button>
             )}
             <button
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="w-full text-left text-white hover:bg-primary-dark dark:hover:bg-secondary-dark block px-3 py-2 rounded-md text-base font-medium"
             >
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              <span className="sr-only">Toggle theme</span>
             </button>
           </div>
-        </Transition>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</main>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-8">{children}</main>
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
+        <div className="container mx-auto px-4 py-6 text-center text-gray-600 dark:text-gray-400">
+          © 2023 Complyance - Internal Company Tool. All rights reserved.
+        </div>
+      </footer>
     </div>
   )
 }
-
-export default Layout
