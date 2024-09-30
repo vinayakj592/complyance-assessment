@@ -6,6 +6,13 @@ import Link from 'next/link'
 export default function Home() {
   const { data: session } = useSession()
 
+  const handleSignIn = (role: 'employee' | 'manager') => {
+    signIn('google', { 
+      callbackUrl: role === 'manager' ? '/manager-dashboard' : '/transactions',
+      role: role
+    })
+  }
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
@@ -16,32 +23,52 @@ export default function Home() {
 
         {!session ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-12">
-            <h3 className="text-2xl font-semibold mb-6">Employee Access</h3>
+            <h3 className="text-2xl font-semibold mb-6">Access</h3>
             <p className="mb-6 text-gray-600 dark:text-gray-400">
-              Log in with your company Google account to access the Complyance system.
+              Log in with your Google account to access the Complyance system.
             </p>
-            <button
-              onClick={() => signIn('google')}
-              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 flex items-center justify-center"
-            >
-              <LogIn className="mr-2" />
-              Sign in with Google
-            </button>
+            <div className="space-y-4">
+              <button
+                onClick={() => handleSignIn('employee')}
+                className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 flex items-center justify-center"
+              >
+                <LogIn className="mr-2" />
+                Sign in with Google as Employee
+              </button>
+              <button
+                onClick={() => handleSignIn('manager')}
+                className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 flex items-center justify-center"
+              >
+                <LogIn className="mr-2" />
+                Sign in with Google as Manager
+              </button>
+            </div>
           </div>
         ) : (
           <div className="flex justify-center space-x-4 mb-12">
-            <Link
-              href="/submit-transaction"
-              className="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
-            >
-              Submit Transaction
-            </Link>
-            <Link
-              href="/transactions"
-              className="py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300"
-            >
-              View Transactions
-            </Link>
+            {session.user.role === 'employee' ? (
+              <>
+                <Link
+                  href="/submit-transaction"
+                  className="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+                >
+                  Submit Transaction
+                </Link>
+                <Link
+                  href="/transactions"
+                  className="py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300"
+                >
+                  View Transactions
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/manager-dashboard"
+                className="py-2 px-4 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300"
+              >
+                Manager Dashboard
+              </Link>
+            )}
           </div>
         )}
 

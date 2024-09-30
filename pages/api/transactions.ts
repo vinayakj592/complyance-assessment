@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from './auth/[...nextauth]'
-import { connectToDatabase } from '../../lib/mongodb'
+import clientPromise from '../../lib/mongodb'
 import { ObjectId } from 'mongodb'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -25,7 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
-  const { db } = await connectToDatabase()
+  const client = await clientPromise
+  const db = client.db()
 
   if (req.method === 'GET') {
     try {
