@@ -23,12 +23,13 @@ export default function Transactions() {
       }
       const data = await res.json()
       setTransactions(data)
-    } catch (err) {
+    } catch {
       setError('Failed to load transactions. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
+  
 
   if (!session) {
     return (

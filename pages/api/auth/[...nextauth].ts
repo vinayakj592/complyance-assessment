@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ user}) {
       if (user.email === 'complyance0@gmail.com') {
         user.role = 'manager';
       } else {

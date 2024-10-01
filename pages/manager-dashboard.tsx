@@ -23,7 +23,7 @@ export default function ManagerDashboard() {
       }
       const data = await res.json()
       setTransactions(data)
-    } catch (err) {
+    } catch {
       setError('Failed to load transactions. Please try again.')
     } finally {
       setIsLoading(false)
@@ -44,13 +44,12 @@ export default function ManagerDashboard() {
         throw new Error(`Failed to ${action} transaction`)
       }
 
-      // Update the local state
       setTransactions(prevTransactions =>
         prevTransactions.map(t =>
           t._id === transactionId ? { ...t, status: action === 'approve' ? 'approved' : 'rejected' } : t
         )
       )
-    } catch (err) {
+    } catch {
       setError(`Failed to ${action} transaction. Please try again.`)
     }
   }
@@ -100,7 +99,7 @@ export default function ManagerDashboard() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {transactions.map((transaction) => (
+                {transactions.map(transaction => (
                   <tr key={transaction._id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {new Date(transaction.createdAt).toLocaleDateString()}

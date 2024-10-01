@@ -11,7 +11,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
-  // Get the client and database connection
   const client = await clientPromise
   const db = client.db()  // If your database has a specific name, use client.db('your-db-name')
 
@@ -34,8 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       res.status(200).json({ message: `Transaction ${action}d successfully` })
-    } catch (error) {
-      res.status(500).json({ error: `Failed to ${req.body.action} transaction` })
+    } catch (err) {  // Changed from 'error' to 'err'
+      res.status(500).json({ error: `Failed to ${req.body.action} transaction`, details: err instanceof Error ? err.message : 'Unknown error' })
     }
   } else {
     res.setHeader('Allow', ['PATCH'])

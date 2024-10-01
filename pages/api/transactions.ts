@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from './auth/[...nextauth]'
 import clientPromise from '../../lib/mongodb'
-import { ObjectId } from 'mongodb'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Enable CORS
@@ -36,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .sort({ createdAt: -1 })
         .toArray()
       res.status(200).json(transactions)
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: 'Failed to fetch transactions' })
     }
   } else if (req.method === 'POST') {
@@ -52,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       const result = await db.collection('transactions').insertOne(newTransaction)
       res.status(201).json({ ...newTransaction, _id: result.insertedId })
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: 'Failed to add transaction' })
     }
   } else {

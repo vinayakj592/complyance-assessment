@@ -18,7 +18,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-4">Complyance: Internal Transaction Approval System</h2>
         <p className="text-xl text-center mb-12">
-          Streamline our company's financial transaction approvals and auditing process.
+          Streamline our company&apos;s financial transaction approvals and auditing process.
         </p>
 
         {!session ? (
@@ -106,7 +106,7 @@ export default function Home() {
               Reject Transactions
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Managers can reject transactions that don't align with company policies.
+              Managers can reject transactions that don&apos;t align with company policies.
             </p>
           </div>
         </div>
