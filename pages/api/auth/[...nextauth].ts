@@ -13,25 +13,36 @@ export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
   callbacks: {
     async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        session.user.role = user.role || 'employee'; // Default to 'employee' if no role is set
+      try {
+        if (session.user) {
+          session.user.id = user.id;
+          session.user.role = user.role || 'employee'; // Default role
+        }
+        return session;
+      } catch (error) {
+        console.error('Session callback error:', error);
+        throw error;
       }
-      return session;
     },
-    async signIn({ user}) {
-      if (user.email === 'complyance0@gmail.com') {
-        user.role = 'manager';
-      } else {
-        user.role = 'employee';
+    async signIn({ user }) {
+      try {
+        if (user.email === 'complyance0@gmail.com') {
+          user.role = 'manager';
+        } else {
+          user.role = 'employee';
+        }
+        return true;
+      } catch (error) {
+        console.error('Sign-in callback error:', error);
+        throw error;
       }
-      return true;
     },
   },
   pages: {
-    signIn: '/',
+    signIn: '/', // Ensure this route exists
   },
-  secret: process.env.NEXTAUTH_SECRET, // Add this line
+  secret: process.env.NEXTAUTH_SECRET, // Ensure NEXTAUTH_SECRET is set
+  debug: true, // Enables debug messages in the console
 }
 
 export default NextAuth(authOptions)
